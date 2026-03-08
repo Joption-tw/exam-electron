@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本電學互動學習站</title>
+    <!-- 使用 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用 Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .tab-active {
+            background-color: white;
+            color: #4f46e5;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-20 md:pb-0">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white p-6 shadow-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-lg">
+                    <i data-lucide="zap" class="text-indigo-600 w-6 h-6"></i>
+                </div>
+                <h1 class="text-2xl font-bold">基本電學互動學習站</h1>
+            </div>
+            <nav class="hidden md:flex gap-4">
+                <button onclick="switchTab('overview')" id="tab-btn-overview" class="px-4 py-1 rounded-full transition tab-active">基礎定義</button>
+                <button onclick="switchTab('logic')" id="tab-btn-logic" class="px-4 py-1 rounded-full transition hover:bg-indigo-500">公式邏輯</button>
+                <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="px-4 py-1 rounded-full transition hover:bg-indigo-500">自我測驗</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 md:p-8">
+        
+        <!-- Tab: Overview -->
+        <div id="content-overview" class="tab-content space-y-6 animate-fade-in">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-indigo-600"></i> 常見電學名詞對照表
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="p-3 border-b whitespace-nowrap">名詞</th>
+                                <th class="p-3 border-b whitespace-nowrap">代號</th>
+                                <th class="p-3 border-b whitespace-nowrap">單位</th>
+                                <th class="p-3 border-b whitespace-nowrap">單位定義</th>
+                                <th class="p-3 border-b hidden md:table-cell">核心定義</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body">
+                            <!-- 由 JavaScript 動態生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <h3 class="font-bold text-amber-800 mb-2 italic">💡 小撇步：如何記憶？</h3>
+                    <ul class="text-sm text-amber-700 space-y-1 list-disc list-inside">
+                        <li><b>V (Voltage)</b> 想像成水壓，推動電的壓力。</li>
+                        <li><b>I (Intensity)</b> 想像成水流的速度。</li>
+                        <li><b>R (Resistance)</b> 想像成水管的大小（阻力）。</li>
+                        <li><b>P (Power)</b> 就像燈泡的亮度，快慢與強度的結合。</li>
+                    </ul>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                    <h3 class="font-bold text-indigo-800 mb-2 italic">📚 單位小知識</h3>
+                    <p class="text-sm text-indigo-700">
+                        歐姆符號 <b>Ω</b> 來自希臘字母 Omega。瓦特 <b>W</b> 是紀念改良蒸汽機的詹姆斯·瓦特。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Logic -->
+        <div id="content-logic" class="tab-content space-y-6 hidden animate-fade-in">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i data-lucide="calculator" class="text-indigo-600"></i> 互動電學邏輯計算機
+                </h2>
+                
+                <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+                    <button onclick="setCalcType('ohms')" id="calc-btn-ohms" class="px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium bg-indigo-600 text-white">歐姆定律 (V=IR)</button>
+                    <button onclick="setCalcType('power')" id="calc-btn-power" class="px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium bg-slate-100 hover:bg-slate-200">電功率 (P=VI)</button>
+                    <button onclick="setCalcType('energy')" id="calc-btn-energy" class="px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium bg-slate-100 hover:bg-slate-200">電能 (E=Pt)</button>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100" id="calculator-ui">
+                    <!-- 由 JavaScript 動態切換 -->
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="font-bold mb-4">🔗 邏輯關係鏈</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="bg-blue-100 p-4 rounded-lg w-full text-center">
+                            <span class="block text-blue-800 font-bold">電荷 (Q)</span>
+                            <span class="text-xs text-blue-600 italic">庫侖 = 安培 × 秒</span>
+                        </div>
+                        <div class="hidden md:block text-slate-300"><i data-lucide="arrow-right"></i></div>
+                        <div class="bg-green-100 p-4 rounded-lg w-full text-center">
+                            <span class="block text-green-800 font-bold">功/能 (E)</span>
+                            <span class="text-xs text-green-600 italic">焦耳 = 伏特 × 庫侖</span>
+                        </div>
+                        <div class="hidden md:block text-slate-300"><i data-lucide="arrow-right"></i></div>
+                        <div class="bg-red-100 p-4 rounded-lg w-full text-center">
+                            <span class="block text-red-800 font-bold">功率 (P)</span>
+                            <span class="text-xs text-red-600 italic">瓦特 = 焦耳 / 秒</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Tab: Quiz -->
+        <div id="content-quiz" class="tab-content hidden animate-fade-in max-w-2xl mx-auto">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8" id="quiz-container">
+                <!-- 由 JavaScript 動態生成測驗內容 -->
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 bg-slate-900 text-slate-400 p-8 text-center text-sm">
+        <p>© 2024 基本電學學習助手 - 幫助你掌握電學的核心概念</p>
+    </footer>
+
+    <!-- Mobile Nav -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-3 z-50">
+        <button onclick="switchTab('overview')" class="flex flex-col items-center gap-1 text-indigo-600" id="mob-btn-overview">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+            <span class="text-[10px]">定義</span>
+        </button>
+        <button onclick="switchTab('logic')" class="flex flex-col items-center gap-1 text-slate-400" id="mob-btn-logic">
+            <i data-lucide="calculator" class="w-6 h-6"></i>
+            <span class="text-[10px]">計算</span>
+        </button>
+        <button onclick="switchTab('quiz')" class="flex flex-col items-center gap-1 text-slate-400" id="mob-btn-quiz">
+            <i data-lucide="help-circle" class="w-6 h-6"></i>
+            <span class="text-[10px]">測驗</span>
+        </button>
+    </div>
+
+    <script>
+        // --- 數據資料 ---
+        const electricalData = [
+            { name: '電能', symbol: 'E', unit: '焦耳 (J)', desc: '電流在一段時間內所做的總功。', unitDef: '焦耳 = 瓦特 × 秒', icon: 'zap', color: 'text-yellow-500' },
+            { name: '時間', symbol: 't', unit: '秒 (sec)', desc: '電流流動或能量轉換持續的時間。', unitDef: '-', icon: 'clock', color: 'text-blue-500' },
+            { name: '電功率', symbol: 'P', unit: '瓦特 (W)', desc: '單位時間內所消耗或轉換的電能。', unitDef: '瓦特 = 焦耳 / 秒', icon: 'activity', color: 'text-red-500' },
+            { name: '電壓', symbol: 'V', unit: '伏特 (V)', desc: '推動電荷在電路中流動的壓力（電位差）。', unitDef: '伏特 = 焦耳 / 庫侖', icon: 'shield', color: 'text-purple-500' },
+            { name: '電流', symbol: 'I', unit: '安培 (A)', desc: '單位時間內通過導體截面的電荷量。', unitDef: '安培 = 庫侖 / 秒', icon: 'waves', color: 'text-cyan-500' },
+            { name: '電阻', symbol: 'R', unit: '歐姆 (Ω)', desc: '導體對電流流動的阻礙程度。', unitDef: '歐姆 = 伏特 / 安培', icon: 'battery', color: 'text-orange-500' },
+            { name: '電量', symbol: 'Q', unit: '庫侖 (C)', desc: '電荷的多少。', unitDef: '庫侖 = 安培 × 秒', icon: 'zap', color: 'text-amber-600' },
+        ];
+
+        const quizData = [
+            { q: "下列哪一個是『電功率』的代號？", a: ["E", "P", "V", "I"], correct: 1 },
+            { q: "『歐姆 (Ω)』是哪一個名詞的單位？", a: ["電壓", "電流", "電阻", "電能"], correct: 2 },
+            { q: "根據歐姆定律，V 等於什麼？", a: ["I / R", "I + R", "I × R", "P / t"], correct: 2 },
+            { q: "『焦耳 (J)』是用來衡量什麼的單位？", a: ["電量", "電功率", "電能", "時間"], correct: 2 },
+            { q: "若電流為 2A，時間為 5秒，則電量 Q 為多少庫侖？", a: ["2.5 C", "7 C", "10 C", "0.4 C"], correct: 2 },
+        ];
+
+        // --- 狀態管理 ---
+        let currentTab = 'overview';
+        let currentCalcType = 'ohms';
+        let quizIndex = 0;
+        let quizScore = 0;
+        let calcValues = { v: 110, i: 1, r: 110 };
+
+        // --- 初始化渲染 ---
+        function init() {
+            renderDataTable();
+            renderCalculator();
+            renderQuiz();
+            lucide.createIcons();
+        }
+
+        // --- 標籤切換 ---
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+
+            // 更新按鈕樣式 (桌面)
+            ['overview', 'logic', 'quiz'].forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tab) btn.classList.add('tab-active');
+                else btn.classList.remove('tab-active');
+            });
+
+            // 更新按鈕樣式 (手機)
+            ['overview', 'logic', 'quiz'].forEach(t => {
+                const btn = document.getElementById(`mob-btn-${t}`);
+                if (t === tab) btn.classList.add('text-indigo-600');
+                else btn.classList.replace('text-indigo-600', 'text-slate-400');
+            });
+            
+            if (tab === 'quiz') resetQuiz();
+            lucide.createIcons();
+        }
+
+        // --- 定義表渲染 ---
+        function renderDataTable() {
+            const tbody = document.getElementById('data-table-body');
+            tbody.innerHTML = electricalData.map(item => `
+                <tr class="hover:bg-indigo-50 transition-colors text-sm md:text-base">
+                    <td class="p-3 border-b font-medium flex items-center gap-2">
+                        <i data-lucide="${item.icon}" class="${item.color} w-4 h-4"></i> ${item.name}
+                    </td>
+                    <td class="p-3 border-b font-mono text-indigo-600 font-bold">${item.symbol}</td>
+                    <td class="p-3 border-b">${item.unit}</td>
+                    <td class="p-3 border-b text-indigo-500 text-xs md:text-sm font-medium">${item.unitDef}</td>
+                    <td class="p-3 border-b text-sm text-slate-500 hidden md:table-cell">${item.desc}</td>
+                </tr>
+            `).join('');
+        }
+
+        // --- 計算機邏輯 ---
+        function setCalcType(type) {
+            currentCalcType = type;
+            ['ohms', 'power', 'energy'].forEach(t => {
+                const btn = document.getElementById(`calc-btn-${t}`);
+                if (t === type) {
+                    btn.classList.replace('bg-slate-100', 'bg-indigo-600');
+                    btn.classList.add('text-white');
+                } else {
+                    btn.classList.replace('bg-indigo-600', 'bg-slate-100');
+                    btn.classList.remove('text-white');
+                }
+            });
+            renderCalculator();
+        }
+
+        function handleCalcInput(field, val) {
+            calcValues[field] = parseFloat(val) || 0;
+            if (field === 'v' || field === 'i') {
+                calcValues.r = (calcValues.v / (calcValues.i || 1)).toFixed(2);
+            } else if (field === 'r') {
+                calcValues.v = (calcValues.i * calcValues.r).toFixed(2);
+            }
+            renderCalculator();
+        }
+
+        function renderCalculator() {
+            const container = document.getElementById('calculator-ui');
+            if (currentCalcType === 'ohms') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">電壓 V (伏特)</label>
+                            <input type="number" value="${calcValues.v}" oninput="handleCalcInput('v', this.value)" class="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-xl font-mono" />
+                        </div>
+                        <div class="flex items-center justify-center text-3xl text-slate-400 font-bold">=</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">電流 I (安培)</label>
+                                <input type="number" value="${calcValues.i}" oninput="handleCalcInput('i', this.value)" class="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-xl font-mono" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">電阻 R (歐姆)</label>
+                                <input type="number" value="${calcValues.r}" oninput="handleCalcInput('r', this.value)" class="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-xl font-mono" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentCalcType === 'power') {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <p class="text-slate-600 mb-4 font-medium">當電壓為 110V，電流為 ${calcValues.i}A 時：</p>
+                        <div class="text-4xl font-bold text-indigo-600 mb-2 font-mono">P = ${(110 * calcValues.i).toFixed(1)} W</div>
+                        <p class="text-sm text-slate-400 italic">計算方式：110V × ${calcValues.i}A</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <p class="text-slate-600 mb-4 font-medium">若一個 100W 的電器使用 60秒：</p>
+                        <div class="text-4xl font-bold text-orange-600 mb-2 font-mono">E = 6000 J</div>
+                        <p class="text-sm text-slate-400 italic">計算方式：100W × 60sec</p>
+                    </div>
+                `;
+            }
+        }
+
+        // --- 測驗邏輯 ---
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            if (quizIndex < quizData.length) {
+                const item = quizData[quizIndex];
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">⚡ 快速檢測</h2>
+                        <span class="text-sm font-medium bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+                            問題 ${quizIndex + 1} / ${quizData.length}
+                        </span>
+                    </div>
+                    <div class="mb-8">
+                        <p class="text-lg text-slate-700 font-medium">${item.q}</p>
+                    </div>
+                    <div class="space-y-3">
+                        ${item.a.map((opt, idx) => `
+                            <button onclick="handleQuizAnswer(${idx})" class="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 transition-all font-medium group flex justify-between items-center">
+                                ${opt}
+                                <div class="w-6 h-6 rounded-full border border-slate-300 group-hover:border-indigo-500"></div>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                renderQuizResult();
+            }
+        }
+
+        function handleQuizAnswer(idx) {
+            if (idx === quizData[quizIndex].correct) quizScore++;
+            quizIndex++;
+            renderQuiz();
+        }
+
+        function renderQuizResult() {
+            const container = document.getElementById('quiz-container');
+            const scorePercent = Math.round((quizScore / quizData.length) * 100);
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="mb-4 flex justify-center">
+                        <div class="bg-green-100 p-4 rounded-full">
+                            <i data-lucide="check-circle" class="text-green-600 w-12 h-12"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">測驗完成！</h2>
+                    <p class="text-slate-600 mb-6 text-lg">
+                        你的得分是 <span class="text-indigo-600 font-bold">${scorePercent}</span> 分
+                    </p>
+                    <button onclick="resetQuiz()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition flex items-center gap-2 mx-auto">
+                        <i data-lucide="refresh-cw" class="w-5 h-5"></i> 再試一次
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function resetQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            renderQuiz();
+        }
+
+        // 啟動程式
+        window.onload = init;
+    </script>
+</body>
+</html>
